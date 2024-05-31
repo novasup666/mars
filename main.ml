@@ -19,7 +19,8 @@ type stream = {
 
 let new_stream str =
   {str = str; index = 0}
-
+(*
+Maybe to implemate a switch to rationnal only calculus
 let rec bcd a b = 
   if a < b then bcd b a
   else 
@@ -34,7 +35,7 @@ let normalize (d,n) =
       (-d/q,n/q)
     else(d/q,n/q)
   )
-
+*)
 exception SyntaxError
 let peek s =
   if s.index < String.length s.str then Some s.str.[s.index]
