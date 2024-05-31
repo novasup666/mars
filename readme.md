@@ -5,9 +5,9 @@ A simple MAth paRSer,
 
 It handles (for now) the next rules : 
 
-$S \rightarrow R+R|R-R|R*R|R/R|R!$
+$S \rightarrow R+R|R-R|R*R|R/R|R!|R|q$
 
-$R\rightarrow (S)|q$
+$R\rightarrow (S)$
 
 Where $S$ is the initial state.
 

@@ -78,24 +78,24 @@ let rec ess s =
   | Some '(' -> (
     let l = arr s in
     match peek s with
-    |Some '+' -> discard s; Sum (l,(ess s))
-    |Some '*' -> discard s; Dot (l,(ess s))
-    |Some '/' -> discard s; Slash (l,(ess s))
-    |Some '-' -> discard s; Minus (l,(ess s))
+    |Some '+' -> discard s; Sum (l,(arr s))
+    |Some '*' -> discard s; Dot (l,(arr s))
+    |Some '/' -> discard s; Slash (l,(arr s))
+    |Some '-' -> discard s; Minus (l,(arr s))
     |Some '!' -> discard s; Fact l
-    |Some c -> if is_number c then let n = the_number s in Value (float_of_string n) else error s
+    |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
     |None -> l
   )
-  |Some c -> if is_number c then let n = the_number s in Value (float_of_string n) else error s
+  |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
   | None -> raise SyntaxError
 and arr s  = 
-  expect s '(';
-  discard s;
-  let e = ess s in
-  expect s ')';
-  discard s;
-  e
-
+   expect s '('; let e = ess s in expect s ')'; e
+(*
+  match peek s with 
+  | Some '(' -> expect s '('; let e = ess s in expect s ')'; e
+  | Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
+  | None -> raise SyntaxError
+*)
 
 let rec facto n  = n*.(facto (n-.1.))
 
@@ -109,3 +109,5 @@ let rec eval e =
   | Slash(a,b) -> (eval a) /. (eval b)
   | Fact a -> let n = eval a in if floor n = n then facto n else raise SyntaxError
   | Value a -> a
+
+let evaluate s = eval (parse s)
