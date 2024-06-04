@@ -15,7 +15,6 @@ Where $S$ is the initial state.
 
 And q is a float.
 
-Published in May 2024 but coded between January and March 2024
-
+Published in May 2024 but coded earlier this year and inspired by a school project of Regex Parser.
 
 (Made in OCaml because we in France bby!)
