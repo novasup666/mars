@@ -9,13 +9,12 @@ $S \rightarrow R+R|R-R|R*R|R/R|R!|R|q$
 
 $R\rightarrow (S)$
 
-Even though these rules are not really handy nor natural for a human, it works!
-
 Where $S$ is the initial state.
 
 And q is a float.
 
-Published in May 2024 but coded between January and March 2024
+Even though these rules are not really handy nor natural for a human, it works!
 
+Use UTOP to handle it.
 
-(Made in OCaml because we in France bby!)
+Published in May 2024 but coded earlier this year and inspired by a school project of Regex Parser
