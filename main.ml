@@ -19,27 +19,20 @@ type stream = {
 
 let new_stream str =
   {str = str; index = 0}
-(*
-Maybe to implemate a switch to rationnal only calculus
-let rec bcd a b = 
-  if a < b then bcd b a
-  else 
-    let r = b mod a in
-    if r = 0 then b else bcd b r
 
-let normalize (d,n) = 
-  if n = 0 then failwith "div by 0 error"
-  else (
-    let q = bcd (abs d) (abs n) in
-    if d*n <0 then
-      (-d/q,n/q)
-    else(d/q,n/q)
-  )
-*)
 exception SyntaxError
-let peek s =
-  if s.index < String.length s.str then Some s.str.[s.index]
-  else None
+
+let discard s = 
+  if s.index >= String.length s.str then (printf "Unexpected end of input\n";  raise SyntaxError) else (s.index <- s.index +1)
+
+let rec peek s =
+  let inner s=
+    if s.index < String.length s.str then Some s.str.[s.index]
+    else None
+  in
+  match inner s with
+  | None -> None
+  | Some c -> if c = ' ' then (discard s; peek s) else Some c
 
 let error s =
   match peek s with
@@ -89,13 +82,10 @@ let rec ess s =
   |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
   | None -> raise SyntaxError
 and arr s  = 
-   expect s '('; let e = ess s in expect s ')'; e
-(*
-  match peek s with 
-  | Some '(' -> expect s '('; let e = ess s in expect s ')'; e
-  | Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
-  | None -> raise SyntaxError
-*)
+   expect s '('; 
+   let e = ess s in 
+   expect s ')'; e
+
 
 let rec facto n  = n*.(facto (n-.1.))
 
