@@ -29,7 +29,6 @@ $S \rightarrow R+R|R-R|R*R|R/R|R!|R$
 
 $R\rightarrow (S)|q$
 
-Where $S$ is the initial state and q a float (positive or negative).
+Where $S$ is the initial state and $q$ a float (positive or negative).
 
-Use UTOP to use it. (its easy and fun)
-
+Use UTOP to use it. 
