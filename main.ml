@@ -79,13 +79,13 @@ and op x s =
   | Some '/' -> discard s; Slash( x, right s)
   | Some '+' -> discard s; Sum(x,right s)
   | Some '-' -> discard s; Minus(x, right s)
-  | Some _  -> error s
-  | None -> x
+  | Some _  | None -> x
 
 and right s = 
   match peek s with
   | Some '(' -> paren s
   | Some c when is_number c -> Value (float_of_string (the_number s))
+  | Some '-' -> discard s;Minus((Value 0.),right s)
   | Some _ | None -> error s  
 
 let rec facto n  = n*.(facto (n-.1.))
