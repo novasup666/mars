@@ -65,7 +65,8 @@ let rec the_number s =
   | None -> ""
 
 
-(*The functions are named phonetically according to the S and R state of the rules*)
+
+(*The whole fun is here*)  
 let rec paren s =
   match peek s with
   | Some '(' -> discard s; let e = (paren s) in expect s ')'; op e s
@@ -88,6 +89,8 @@ and right s =
   | Some '-' -> discard s;Minus((Value 0.),right s)
   | Some _ | None -> error s  
 
+
+  
 let rec facto n  = n*.(facto (n-.1.))
 
 let parse s = paren (new_stream s)
