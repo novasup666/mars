@@ -21,7 +21,9 @@ Published in May 2024 but coded earlier this year and inspired by a school proje
 
 ### better.ml 
 Handles basic math operations, as long as the priority is explicit:
+
 3*(1+2) : OK
+
 3*1+2 : not OK
 
 The rules are :
