@@ -86,8 +86,9 @@ and arr s  =
    let e = ess s in 
    expect s ')'; e
 
-
-let rec facto n  = n*.(facto (n-.1.))
+let rec facto n  = 
+  assert (n >0);
+  if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
 
 let parse s = ess (new_stream s)
 
@@ -97,7 +98,7 @@ let rec eval e =
   | Dot (a,b) -> (eval a) *. (eval b)
   | Minus(a,b) -> (eval a) -. (eval b)
   | Slash(a,b) -> (eval a) /. (eval b)
-  | Fact a -> let n = eval a in if floor n = n then facto n else raise SyntaxError
+  | Fact a -> let n = eval a in if floor n = n then facto (int_of_float n) else raise SyntaxError
   | Value a -> a
 
 let evaluate s = eval (parse s)
