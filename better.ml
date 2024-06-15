@@ -80,6 +80,7 @@ and op x s =
   | Some '/' -> discard s; Slash( x, right s)
   | Some '+' -> discard s; Sum(x,right s)
   | Some '-' -> discard s; Minus(x, right s)
+  | Some '!' -> Fact x
   | Some _  | None -> x
 
 and right s = 
