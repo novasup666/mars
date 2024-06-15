@@ -68,18 +68,19 @@ let rec the_number s =
 (*The functions are named phonetically according to the S and R state of the rules*)
 let rec paren s =
   match peek s with
-  | Some '(' -> discard s; let e = (paren s) in expect s ')'; e
+  | Some '(' -> discard s; let e = (paren s) in expect s ')'; op e s
   | Some '-' -> discard s;Minus((Value 0.),paren s)
-  | Some c when is_number c -> op (the_number s) s
+  | Some c when is_number c -> op (Value (float_of_string (the_number s))) s
   |Some _ | None -> error s
 
 and op x s = 
   match peek s with
-  | Some '*' -> discard s; Dot( Value (float_of_string x),right s)
-  | Some '/' -> discard s; Slash( Value (float_of_string x), right s)
-  | Some '+' -> discard s; Sum(Value (float_of_string x),right s)
-  | Some '-' -> discard s; Minus(Value (float_of_string x), right s)
-  | Some _  | None -> error s
+  | Some '*' -> discard s; Dot( x,right s)
+  | Some '/' -> discard s; Slash( x, right s)
+  | Some '+' -> discard s; Sum(x,right s)
+  | Some '-' -> discard s; Minus(x, right s)
+  | Some _  -> error s
+  | None -> x
 
 and right s = 
   match peek s with

@@ -19,7 +19,7 @@ Use UTOP to use it.
 
 Published in May 2024 but coded earlier this year and inspired by a school project of Regex Parser
 
-### main.ml
+### main.ml (not finished)
 Handles basic math operations, as long as the priority is explicit:
 3*(1+2) : OK
 3*1+2 : not OK
