@@ -62,34 +62,34 @@ let is_number c =
 let rec the_number s = 
   match peek s with
   | Some c -> if is_numeric c then (discard s; (Char.escaped c)^(the_number s)) else ""
-  | None -> ""
+  | _ -> raise SyntaxError
 
 
 (*The functions are named phonetically according to the S and R state of the rules*)
-let rec paren s =
+let rec ess s =
   match peek s with
-  | Some '(' -> discard s; let e = (paren s) in expect s ')'; e
-  | Some '-' -> discard s;Minus((Value 0.),paren s)
-  | Some c when is_number c -> op (the_number s) s
-  |Some _ | None -> error s
+  | Some '(' -> (
+    let l = arr s in
+    match peek s with
+    |Some '+' -> discard s; Sum (l,(arr s))
+    |Some '*' -> discard s; Dot (l,(arr s))
+    |Some '/' -> discard s; Slash (l,(arr s))
+    |Some '-' -> discard s; Minus (l,(arr s))
+    |Some '!' -> discard s; Fact l
+    |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
+    |None -> l
+  )
+  |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
+  | None -> raise SyntaxError
+and arr s  = 
+   expect s '('; 
+   let e = ess s in 
+   expect s ')'; e
 
-and op x s = 
-  match peek s with
-  | Some '*' -> discard s; Dot( Value (float_of_string x),right s)
-  | Some '/' -> discard s; Slash( Value (float_of_string x), right s)
-  | Some '+' -> discard s; Sum(Value (float_of_string x),right s)
-  | Some '-' -> discard s; Minus(Value (float_of_string x), right s)
-  | Some _  | None -> error s
-
-and right s = 
-  match peek s with
-  | Some '(' -> paren s
-  | Some c when is_number c -> Value (float_of_string (the_number s))
-  | Some _ | None -> error s  
 
 let rec facto n  = n*.(facto (n-.1.))
 
-let parse s = paren (new_stream s)
+let parse s = ess (new_stream s)
 
 let rec eval e = 
   match e with
