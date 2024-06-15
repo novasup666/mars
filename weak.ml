@@ -87,7 +87,7 @@ and arr s  =
    expect s ')'; e
 
 let rec facto n  = 
-  assert (n >0);
+  assert (n >=0);
   if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
 
 let parse s = ess (new_stream s)
