@@ -71,8 +71,9 @@ let rec cons_p s =
   | Some '('  -> discard s; cons_p s
   | Some '+'  -> discard s; let v,op = cons_p s in (v,'+'::op)
   | Some '*'  -> discard s; let v,op = cons_p s in (v,'*'::op)
-  | Some c when is_number c -> let v,op = cons_p s in let g = the_number s in (g::v,op)
-  | Some ')' | None         -> discard s; ([],[])
+  | Some c when is_number c -> let g = the_number s in let v,op = cons_p s in  (g::v,op)
+  | Some ')' -> discard s; ([],[])
+  | None -> ([],[])
   | Some _    -> error s
 
 
