@@ -9,7 +9,6 @@ type math_exp =
 | Slash of math_exp * math_exp
 | Fact of math_exp
 | Value of float
-(*rationnal numbers are stored as int*int *)
   
 
 type stream = {

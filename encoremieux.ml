@@ -61,35 +61,28 @@ let is_number c =
 let rec the_number s = 
   match peek s with
   | Some c -> if is_numeric c then (discard s; (Char.escaped c)^(the_number s)) else ""
-  | _ -> raise SyntaxError
+  | None -> ""
 
 
-(*The functions are named phonetically according to the S and R state of the rules*)
-let rec ess s =
+
+(*The whole fun is here*)  
+let rec cons_p s =
   match peek s with
-  | Some '(' -> (
-    let l = arr s in
-    match peek s with
-    |Some '+' -> discard s; Sum (l,(arr s))
-    |Some '*' -> discard s; Dot (l,(arr s))
-    |Some '/' -> discard s; Slash (l,(arr s))
-    |Some '-' -> discard s; Minus (l,(arr s))
-    |Some '!' -> discard s; Fact l
-    |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
-    |None -> l
-  )
-  |Some c -> if is_number c then (let n = the_number s in Value (float_of_string n)) else error s
-  | None -> raise SyntaxError
-and arr s  = 
-   expect s '('; 
-   let e = ess s in 
-   expect s ')'; e
+  | Some '('  -> discard s; cons_p s
+  | Some '+'  -> discard s; let v,op = cons_p s in (v,'+'::op)
+  | Some '*'  -> discard s; let v,op = cons_p s in (v,'*'::op)
+  | Some c when is_number c -> let v,op = cons_p s in let g = the_number s in (g::v,op)
+  | Some ')' | None         -> discard s; ([],[])
+  | Some _    -> error s
 
+
+
+  
 let rec facto n  = 
   assert (n >=0);
   if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
 
-let parse s = ess (new_stream s)
+let parse s = cons_p (new_stream s)
 
 let rec eval e = 
   match e with
@@ -100,4 +93,5 @@ let rec eval e =
   | Fact a -> let n = eval a in if floor n = n then facto (int_of_float n) else raise SyntaxError
   | Value a -> a
 
-let evaluate s = eval (parse s)
+(*let evaluate s = eval (parse s)
+*)
