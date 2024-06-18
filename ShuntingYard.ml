@@ -1,14 +1,15 @@
 open Printf
+open Stack
 let () = Printexc.record_backtrace true
 
 
 type math_exp =
-| Sum of math_exp * math_exp
-| Minus of math_exp * math_exp
-| Dot of math_exp * math_exp
-| Slash of math_exp * math_exp
-| Fact of math_exp
+| Plus 
+| Minus 
+| Dot 
+| Slash 
 | Value of float
+| Empty
   
 
 type stream = {
@@ -66,19 +67,22 @@ let rec the_number s =
 
 
 (*The whole fun is here*)  
-let rec cons_p s =
-  match peek s with
-  | Some '('  -> discard s; cons_p s
-  | Some '+'  -> discard s; let v,op = cons_p s in (v,'+'::op)
-  | Some '*'  -> discard s; let v,op = cons_p s in (v,'*'::op)
-  | Some c when is_number c -> let g = the_number s in let v,op = cons_p s in  (g::v,op)
-  | Some ')' -> discard s; ([],[])
-  | None -> ([],[])
-  | Some _    -> error s
+let shunting_yard s = 
+  let p = Stack.create() in
+  let rec inner s v  =
+    match peek s with
+    | Some '+'  -> discard s; push Plus p; inner s v 
+    | Some '*'  -> discard s; push Dot p; inner s v 
+    | Some '/'  -> discard s; push Slash p; inner s v
+    | Some '-' ->  discard s; push 
+    | Some c when is_number c -> let g = the_number s in inner s (g::v) op
+    | Some ')' -> discard s; ([],[])
+    | None -> ([],[])
+    | Some _    -> error s
+  in
+  inner s []
 
 
-
-  
 let rec facto n  = 
   assert (n >=0);
   if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
@@ -93,6 +97,6 @@ let rec eval e =
   | Slash(a,b) -> (eval a) /. (eval b)
   | Fact a -> let n = eval a in if floor n = n then facto (int_of_float n) else raise SyntaxError
   | Value a -> a
-
+  | Empty -> 0.
 (*let evaluate s = eval (parse s)
-*)
+*) 
