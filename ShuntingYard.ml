@@ -1,5 +1,5 @@
 open Printf
-open Stack
+
 let () = Printexc.record_backtrace true
 
 
@@ -64,39 +64,58 @@ let rec the_number s =
   | Some c -> if is_numeric c then (discard s; (Char.escaped c)^(the_number s)) else ""
   | None -> ""
 
+let pol_calc q = 
+  let p = Stack.create () in
+  while not (Queue.is_empty q) do
+    let token = Queue.pop q in
+    match token with
+    | Plus -> let a = Stack.pop p in let b = Stack.pop p in Stack.push (a+.b) p
+    | Dot -> let a = Stack.pop p in let b = Stack.pop p in Stack.push (a*.b) p
+    | Slash -> let a = Stack.pop p in let b = Stack.pop p in Stack.push (b/.a) p
+    | Minus -> let a = Stack.pop p in let b = Stack.pop p in Stack.push (b-.a) p
+    | Value a -> Stack.push a p
+    | Empty -> failwith "c vid"
+  done;
+  Stack.pop p
 
+let op_prio exp = 
+  match exp with
+  | Plus -> 1
+  | Minus -> 0
+  | Dot | Slash -> 2
+  | Value _ | Empty -> failwith "ce ne sont pas des opérateurs"
+
+let op_push exp p q = 
+  let op =   ref (Stack.pop p) in
+  while (op_prio !op) > (op_prio exp) do
+    Queue.push !op q;
+    op := Stack.pop p 
+  done;
+  Queue.push exp q
 
 (*The whole fun is here*)  
-let shunting_yard s = 
-  let p = Stack.create() in
-  let rec inner s v  =
+let rec shunting_yard s = 
+  let p = Stack.create () in 
+  let q = Queue.create () in
+  let rec inner s  =
     match peek s with
-    | Some '+'  -> discard s; push Plus p; inner s v 
-    | Some '*'  -> discard s; push Dot p; inner s v 
-    | Some '/'  -> discard s; push Slash p; inner s v
-    | Some '-' ->  discard s; push 
-    | Some c when is_number c -> let g = the_number s in inner s (g::v) op
-    | Some ')' -> discard s; ([],[])
-    | None -> ([],[])
+    | Some '+'  -> discard s; op_push Plus p q; inner s 
+    | Some '*'  -> discard s; op_push Dot p q; inner s  
+    | Some '/'  -> discard s; op_push Slash p q; inner s 
+    | Some '-' ->  discard s; op_push Minus p q; inner s 
+    | Some c when is_number c -> let g = the_number s in Queue.push (Value (float_of_string g)) q; inner s 
+    | Some ')' -> discard s;
+    | Some '(' -> discard s; Queue.push (Value (shunting_yard s)) q
+    | None -> ()
     | Some _    -> error s
   in
-  inner s []
+  inner s;
+  pol_calc q
 
 
 let rec facto n  = 
   assert (n >=0);
   if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
 
-let parse s = cons_p (new_stream s)
+let parse s = shunting_yard (new_stream s)
 
-let rec eval e = 
-  match e with
-  | Sum (a,b) -> (eval a) +. (eval b)
-  | Dot (a,b) -> (eval a) *. (eval b)
-  | Minus(a,b) -> (eval a) -. (eval b)
-  | Slash(a,b) -> (eval a) /. (eval b)
-  | Fact a -> let n = eval a in if floor n = n then facto (int_of_float n) else raise SyntaxError
-  | Value a -> a
-  | Empty -> 0.
-(*let evaluate s = eval (parse s)
-*) 
