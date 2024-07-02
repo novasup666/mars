@@ -113,9 +113,6 @@ let rec shunting_yard s =
   pol_calc q
 
 
-let rec facto n  = 
-  assert (n >=0);
-  if n = 0 then 1. else  (float_of_int n) *.(facto (n-1))
 
 let parse s = shunting_yard (new_stream s)
 
