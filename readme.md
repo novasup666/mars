@@ -34,3 +34,8 @@ $R\rightarrow (S)|q$
 Where $S$ is the initial state and $q$ a float (positive or negative).
 
 Use UTOP to use it. 
+
+
+### ShuntingYard
+
+Partial implementation of the algorithm of Shunting Yard to solve basic math expressions.
