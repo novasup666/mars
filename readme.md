@@ -36,6 +36,15 @@ Where $S$ is the initial state and $q$ a float (positive or negative).
 Use UTOP to use it. 
 
 
+### EvenBetter
+$S\rightarrow S+T | T$
+
+$T\rightarrow T*F | F$
+
+$F\rightarrow (S) | n$
+
+Not working for the moment
+
 ### ShuntingYard
 
 Partial implementation of the algorithm of Shunting Yard to solve basic math expressions.
